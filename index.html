@@ -128,7 +128,7 @@ body{
     <div class="logo">v</div>
     <div class="title-block">
       <b>Ridgeway AI Infrastructure</b>
-      <span class="subtitle">A post-EMIS reference architecture for one NHS GP practice · after “After EMIS” v2.5</span>
+      <span class="subtitle">A post-EMIS reference architecture for one NHS GP practice · after “After EMIS” v3.1</span>
     </div>
     <div class="nav">
       <a class="cur" href="index.html">Map</a>
@@ -150,10 +150,13 @@ body{
     <!-- ═══════ MAP ═══════ -->
     <div class="map">
       <div class="intro">
-        Every box is a real component of the working <b>Ridgeway</b> deployment or a near-term gap.
-        Identifiable inference runs locally; only synthetic and structured material crosses the
-        <b>boundary diode</b> to the cloud assurance layer. Click any node for what it does, its
-        data classification, and the repo or system that implements it.
+        This maps an architecture <b>designed and ready for deployment</b> at one NHS GP practice
+        (Ridgeway, Harrow). Some components are in daily clinical use (e.g. the Tortus scribe);
+        the <b>local inference layer is specified and awaiting hardware</b>, not yet running — each
+        node carries its own status. <i>By design</i>, identifiable inference will run locally and
+        only synthetic, structured material crosses the <b>boundary diode</b> to the cloud assurance
+        layer. Click any node for what it does, its data classification, status, and the repo or
+        system that implements it.
       </div>
 
       <!-- Layer: external intelligence -->
@@ -172,7 +175,7 @@ body{
         <span class="ltag">Substrate</span>
         <span class="clf pt">patient rights-holder</span>
         <h3>Clinically-governed shared record (patient vault)</h3>
-        <div class="ldesc">The longitudinal record. Patient is primary rights-holder; clinical systems are licensees of scoped, time-limited access. Custodian: NHS Digital Identity Trust.</div>
+        <div class="ldesc">The longitudinal record. Patient is primary rights-holder; clinical systems are licensees of scoped, time-limited access. Proposed custodian: a regulated UK trust (working name “NHS Digital Identity Trust”) — not yet an existing body.</div>
         <div class="nodes" id="nodes-vault"></div>
       </div>
 
@@ -183,7 +186,7 @@ body{
         <span class="ltag">On-premise</span>
         <span class="clf id">sees identifiable data</span>
         <h3>Local clinical inference &amp; workflow</h3>
-        <div class="ldesc">Mac mini M4 · Qwen 2.5 32B (Ollama / AnythingLLM) + best-of-breed modular apps. Air-gapped during clinical operation. Clinician retains medico-legal responsibility.</div>
+        <div class="ldesc">Mac mini M4 · Qwen 2.5 32B (Ollama / AnythingLLM) — hardware on order, not yet running — alongside best-of-breed modular apps. By design: air-gapped during clinical operation, clinician retains medico-legal responsibility.</div>
         <div class="nodes" id="nodes-local"></div>
       </div>
 
@@ -227,7 +230,8 @@ body{
       </div>
 
       <div class="statbox">
-        <h4 style="margin-bottom:8px">Directional economics (per practice / yr)</h4>
+        <h4 style="margin-bottom:2px">Directional economics (per practice / yr)</h4>
+        <div style="font-size:10.5px;color:#9a8fae;margin-bottom:8px">Illustrative ranges from the paper — not procurement-grade costing</div>
         <div class="srow"><span>Current duopoly model</span><b>£15k–£26k</b></div>
         <div class="srow"><span>Mature target model</span><b>£7.8k–£13.7k</b></div>
         <div class="srow"><span>Local AI hardware (4-yr amortised)</span><b>£800–£1,200</b></div>
@@ -237,7 +241,7 @@ body{
   </div>
 
   <div class="foot">
-    <span><b style="color:#5a3a83">Source:</b> Lloyd, <i>After EMIS — AI is dissolving the GP EMR duopoly</i>, v2.5 (May 2026)</span>
+    <span><b style="color:#5a3a83">Source:</b> Lloyd, <i>After EMIS — AI is dissolving the GP EMR duopoly</i>, v3.1 (May 2026)</span>
     <span>·</span>
     <span>Prototype: Ridgeway Surgery, Harrow</span>
     <span>·</span>

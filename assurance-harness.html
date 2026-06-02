@@ -107,7 +107,7 @@ h4{margin:0 0 10px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;c
     <div class="logo">v</div>
     <div class="title-block">
       <b>Cloud Assurance Harness</b>
-      <span class="subtitle">Open Clinical AI Validation Framework · benchmarks the local model on synthetic material only</span>
+      <span class="subtitle">Open Clinical AI Validation Framework (working name) · will benchmark the local model on synthetic material only — design demonstration</span>
     </div>
     <div class="nav">
       <a href="index.html">Map</a>
@@ -122,7 +122,8 @@ h4{margin:0 0 10px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;c
     <span class="ok">no identifiable data present</span>
     <span class="ok">inbound: signed prompt templates</span>
     <span class="ok">corpus: synthetic + public vignettes</span>
-    <span class="ok" id="banner-run">idle</span>
+    <span style="display:inline-flex;align-items:center;gap:7px;color:#e3b35a">⚠ model under test: not yet deployed</span>
+    <span class="ok" id="banner-run">idle (demo)</span>
     <span style="margin-left:auto;color:#7fae95">across the boundary diode ↑ from local inference</span>
   </div>
 
@@ -131,12 +132,12 @@ h4{margin:0 0 10px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;c
     <div class="col">
       <h4>Model under test</h4>
       <div class="mut">
-        <div class="mname">Ridgeway local model</div>
-        <div class="mver">qwen2.5:32b · sha256 4f1c…a907</div>
-        <div class="mrow"><span>Runtime</span><b>Ollama · Mac mini M4</b></div>
-        <div class="mrow"><span>Prompt pack</span><b>v3.2 (signed)</b></div>
-        <div class="mrow"><span>Last full sweep</span><b>31 May 2026</b></div>
-        <div class="mrow"><span>Candidate</span><b>qwen2.5:32b-q5</b></div>
+        <div class="mname">Ridgeway local model <span style="font-size:9.5px;font-weight:700;color:#a07530;background:#fff6ea;border:1px solid #ead7a8;padding:1px 7px;border-radius:9px;margin-left:4px;vertical-align:middle">NOT YET DEPLOYED</span></div>
+        <div class="mver">qwen2.5:32b · target model (hardware on order)</div>
+        <div class="mrow"><span>Runtime</span><b>Ollama · Mac mini M4 (on order)</b></div>
+        <div class="mrow"><span>Prompt pack</span><b>v3.2 (draft)</b></div>
+        <div class="mrow"><span>Last full sweep</span><b>none yet · pre-deployment</b></div>
+        <div class="mrow"><span>Status</span><b>designed · ready on deployment</b></div>
       </div>
 
       <h4>Synthetic test corpus</h4>
@@ -149,7 +150,8 @@ h4{margin:0 0 10px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;c
         <div class="note">Every case is synthetic, public, or formally de-identified. No case derives from a real Ridgeway patient. The harness can run before any clinical deployment.</div>
       </div>
 
-      <button class="runbtn" id="runbtn">▶ Run assurance sweep</button>
+      <div style="font-size:11px;color:#a07530;background:#fff6ea;border:1px solid #ead7a8;border-radius:8px;padding:8px 10px;margin-bottom:10px;line-height:1.4">⚙ <b>Design demonstration.</b> The local model is not yet deployed (hardware on order). Running a sweep illustrates how the harness will evaluate it on synthetic cases — figures shown are <b>illustrative</b>, not results of a real run.</div>
+      <button class="runbtn" id="runbtn">▶ Run illustrative sweep</button>
       <h4>Case feed</h4>
       <div class="feed" id="feed"></div>
     </div>
@@ -217,7 +219,7 @@ h4{margin:0 0 10px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;c
         <div class="metric"><span>Hard safety failures</span><span class="v" id="m-fail">—</span></div>
       </div>
 
-      <h4>Trend vs. previous sweep</h4>
+      <h4>Illustrative trend (design target)</h4>
       <div class="report" style="padding:12px 14px">
         <div class="metric"><span>v3.1 → v3.2 prompt pack</span><span class="v good" id="t-prompt">—</span></div>
         <div class="metric"><span>Red-flag recall</span><span class="v" id="t-redflag">—</span></div>
@@ -226,7 +228,7 @@ h4{margin:0 0 10px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;c
 
       <div class="signoff" id="signoff">
         <b>Clinical safety sign-off</b><br>
-        Run a sweep to generate a versioned assurance report for the clinical safety case (DCB0129/0160). The named clinical safety officer interprets the evidence and authorises deployment.
+        Run an illustrative sweep to preview the report the harness will produce <i>once the local model is deployed</i>. On deployment it generates a versioned report for the clinical safety case (DCB0129/0160); the named clinical safety officer interprets the real evidence and authorises use.
       </div>
     </div>
   </div>
@@ -332,7 +334,7 @@ async function sweep(){
   // report
   const safety = ((pass+flag)/(total)*100).toFixed(1);
   $("grade").textContent = "A−";
-  $("reportver").textContent = "report 2026-06-02 · qwen2.5:32b";
+  $("reportver").textContent = "illustrative report · qwen2.5:32b (demo)";
   $("m-safety").innerHTML = '<span class="v good">99.1%</span>';
   $("m-guide").innerHTML = '<span class="v good">96.0%</span>';
   $("m-grader").innerHTML = '<span class="v good">κ 0.91</span>';
@@ -343,12 +345,13 @@ async function sweep(){
   $("t-allergy").innerHTML='<span class="v warnv">1 miss — see SAFE-118</span>';
 
   $("signoff").innerHTML =
-    '<b>Clinical safety sign-off — provisional</b><br>'+
-    'Composite A−. One hard safety failure (SAFE-118: penicillin-allergy conflict not surfaced) blocks unconditional sign-off. '+
-    'Action: tighten allergy cross-check prompt, re-run gate 1 before deployment of the q5 candidate.'+
-    '<div class="sig">Generated for DCB0129/0160 · awaiting CSO: Dr D. Lloyd · '+new Date().toLocaleDateString("en-GB")+'</div>';
+    '<b>Clinical safety sign-off — illustrative</b><br>'+
+    'A demonstration of the report the harness will produce once the local model is deployed. '+
+    'In this synthetic example, one hard safety failure (SAFE-118: penicillin-allergy conflict not surfaced) would block sign-off — '+
+    'the kind of signal the harness is built to catch before clinical use.'+
+    '<div class="sig">Demonstration output · format for DCB0129/0160 · CSO: Dr D. Lloyd</div>';
 
-  $("banner-run").textContent = "sweep complete · 1 blocker";
+  $("banner-run").textContent = "demo sweep complete (illustrative)";
   $("runbtn").disabled = false;
   $("runbtn").textContent = "↻ Re-run assurance sweep";
   running = false;

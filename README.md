@@ -4,14 +4,15 @@ A reference architecture for AI in one NHS general practice, after the
 EMIS/TPP duopoly. A set of single-file, dependency-free HTML pages that
 **map out** the infrastructure and **demonstrate** the components that
 didn't yet exist. Companion to the position paper
-*"After EMIS — AI is dissolving the GP EMR duopoly"* (Lloyd, v2.5, May 2026),
-grounded in the working Ridgeway Surgery prototype.
+*"After EMIS — AI is dissolving the GP EMR duopoly"* (Lloyd, v3.1, May 2026),
+grounded in the partial Ridgeway Surgery prototype (some components in daily use;
+the local inference layer is specified and awaiting hardware, not yet running).
 
 ## The pages
 
 | File | Page | What it is |
 |---|---|---|
-| **`index.html`** | **Map** | The landing page. An interactive map of the whole practice AI estate across the four architectural layers (intelligence feeds → patient vault → local inference → **boundary diode** → cloud assurance), wrapped in the governance layer. Every node is a real component or near-term gap; click to inspect its role, data classification and the repo that implements it. |
+| **`index.html`** | **Map** | The landing page. An interactive map of the whole practice AI estate across the four architectural layers (intelligence feeds → patient vault → local inference → **boundary diode** → cloud assurance), wrapped in the governance layer. Every node carries its own status (in daily use / specified / awaiting hardware); click to inspect its role, data classification and the repo that implements it. |
 | `consultation.html` | Consultation | The animated one-episode-of-care mockup: vault access, Tortus scribing, local inference, allergy cross-reference, patient letter written back to the vault. |
 | `assurance-harness.html` | Assurance | The **cloud assurance harness** as a working dashboard. Runs a synthetic-only sweep through the four-layer evaluation stack (deterministic safety checks → guideline-grounded RAG → frontier multi-grader critique → human adjudication) and produces a versioned assurance report for the clinical safety case. Never sees patient data. |
 | `referral-pa.html` | Refer-to | The service-owned referral directory. Plain-English search returns one current service card — criteria, exclusions, route, attachments, freshness — with NHS / statutory / VCS tier badges, safeguarding banners, and an AI steward. |
@@ -20,8 +21,8 @@ grounded in the working Ridgeway Surgery prototype.
 
 1. **Patient vault** — patient is the primary rights-holder; clinical systems
    are licensees of scoped, time-limited access.
-2. **Local clinical inference** — Qwen 2.5 32B on a Mac mini M4; identifiable
-   data never leaves the practice perimeter.
+2. **Local clinical inference** — Qwen 2.5 32B on a Mac mini M4 (hardware on
+   order); by design, identifiable data never leaves the practice perimeter.
 3. **Boundary diode** — only synthetic outputs, structured metrics, model
    hashes and signed inbound templates may cross.
 4. **Cloud assurance harness** — multi-grader benchmarking on synthetic and

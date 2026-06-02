@@ -419,7 +419,7 @@ body{
     <div class="logo">v</div>
     <div class="title-block">
       <b>Clinically governed shared record</b>
-      <span class="subtitle">Patient rights-holder · NHS Digital Identity Trust custodian</span>
+      <span class="subtitle">Patient rights-holder · custodian: NHS Digital Identity Trust (proposed)</span>
     </div>
     <span class="dot">·</span>
     <span class="name" id="patname" style="opacity:.25;transition:opacity .5s">Mrs A. Patel</span>
@@ -622,7 +622,7 @@ body{
   <div class="foot">
     <span><span class="vmark"></span>= data field sourced from patient vault</span>
     <span>·</span>
-    <span>Vault custodian: <b>NHS Digital Identity Trust</b></span>
+    <span>Vault custodian <i>(proposed)</i>: <b>NHS Digital Identity Trust</b></span>
     <span>·</span>
     <span>Patient access: <a>nhs.app/myrecord</a></span>
     <span>·</span>
@@ -638,7 +638,7 @@ body{
   <h4>POST-EMIS ARCHITECTURE</h4>
   <div class="layer" id="lay-vault">
     <div class="lab">Clinically governed shared record</div>
-    <div class="desc">Patient rights-holder · NHS Digital Identity Trust custodian</div>
+    <div class="desc">Patient rights-holder · proposed custodian: NHS Digital Identity Trust</div>
   </div>
   <div class="arrow">↓ scoped, time-limited access</div>
   <div class="layer" id="lay-local">
@@ -741,7 +741,7 @@ const TL = {
 // captions paired to phase boundaries
 const captions = [
   {t:TL.vaultRequest,  tag:"VAULT",     txt:"Patient is the primary rights-holder. Practice requests scoped, time-limited access for an episode of care."},
-  {t:TL.vaultGranted,  tag:"VAULT",     txt:"Access granted. Vault custodian (NHS Digital Identity Trust) records the grant; patient can revoke at any time."},
+  {t:TL.vaultGranted,  tag:"VAULT",     txt:"Access granted. The proposed vault custodian (working name: NHS Digital Identity Trust) records the grant; patient can revoke at any time."},
   {t:TL.hydrateStart,  tag:"VAULT",     txt:"The EMR is now a thin workflow layer above the vault. Each field is sourced from the shared record (purple marker)."},
   {t:TL.scribeStart,   tag:"MODULAR",   txt:"Tortus scribes the consultation. Modular components compose into the workflow — no single-vendor monolith."},
   {t:TL.inferStart,    tag:"LOCAL AI",  txt:"Inference runs on-premise (Mac mini M4, Qwen 2.5 32B). Identifiable patient data never crosses the practice perimeter."},
