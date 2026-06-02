@@ -173,9 +173,9 @@ body{
       <!-- Layer: vault -->
       <div class="layer vault">
         <span class="ltag">Substrate</span>
-        <span class="clf pt">patient rights-holder</span>
+        <span class="clf pt">patient-centred</span>
         <h3>Clinically-governed shared record (patient vault)</h3>
-        <div class="ldesc">The longitudinal record. Patient is primary rights-holder; clinical systems are licensees of scoped, time-limited access. Proposed custodian: a regulated UK trust (working name “NHS Digital Identity Trust”) — not yet an existing body.</div>
+        <div class="ldesc">The longitudinal record. Patient-centred shared record: the patient has enforceable access, transparency and consent/objection rights; care providers retain statutory record-keeping and clinical governance responsibilities. Proposed custodian: a regulated UK trust (working name “NHS Digital Identity Trust”) — not yet an existing body.</div>
         <div class="nodes" id="nodes-vault"></div>
       </div>
 
@@ -186,7 +186,11 @@ body{
         <span class="ltag">On-premise</span>
         <span class="clf id">sees identifiable data</span>
         <h3>Local clinical inference &amp; workflow</h3>
-        <div class="ldesc">Mac mini M4 · Qwen 2.5 32B (Ollama / AnythingLLM) — hardware on order, not yet running — alongside best-of-breed modular apps. By design: air-gapped during clinical operation, clinician retains medico-legal responsibility.</div>
+        <div class="ldesc"><b>The architecture is the pattern</b> — local inference + cloud assurance + boundary diode — not a specific box. Current reference implementation:<br>
+        <b>Reference hardware:</b> Apple Silicon / small-form local server class (Mac mini M4 — on order)<br>
+        <b>Candidate model:</b> Qwen 2.5 32B via Ollama / AnythingLLM<br>
+        <b>Deployment pattern:</b> network-isolated during identifiable inference, with controlled, auditable update &amp; export pathways, alongside best-of-breed modular apps<br>
+        <b>Evaluation status:</b> pre-deployment (hardware on order, not yet running) — final model subject to benchmark, clinical safety case, latency &amp; update governance. Clinician retains medico-legal responsibility.</div>
         <div class="nodes" id="nodes-local"></div>
       </div>
 
@@ -225,7 +229,7 @@ body{
         <div class="gitem">DPIA — simplified by local-only identifiable inference</div>
         <div class="gitem">DSPT data-flow evidence via diode + audit</div>
         <div class="gitem">Named clinical safety officer + Caldicott Guardian</div>
-        <div class="gitem">Triadic care: AI as named, auditable participant</div>
+        <div class="gitem">Triadic care: AI as named, auditable participant; clinician remains the accountable decision-maker</div>
         <div class="gitem">Immutable audit · prompt-change control · rollback</div>
       </div>
 
@@ -269,7 +273,7 @@ const NODES = {
      detail:"Generates synthetic surgeries and consultation streams — useful both as a teaching tool and as a source of non-identifiable cases for the assurance harness."},
   ],
   vault: [
-    {name:"Patient vault", role:"Longitudinal record; patient holds primary access rights", cls:"pt", ext:"FHIR + Verifiable Credentials", status:"Proposed substrate",
+    {name:"Patient vault", role:"Longitudinal record; patient holds enforceable access rights", cls:"pt", ext:"FHIR + Verifiable Credentials", status:"Proposed substrate",
      detail:"Federated custody with patient-controlled access — not self-hosting. FHIR structures, W3C Verifiable Credentials and DIDs. Emergency override modelled on the Summary Care Record framework; custodial defaults for reduced capacity / digital exclusion."},
     {name:"NHS App / Single Patient Record", role:"Patient-facing access &amp; revocation", cls:"pt", ext:"NHS England (2028)", status:"National",
      detail:"The patient-side surface. The paper argues real control needs an explicit architecture of rights, custody, audit, override and liability — not merely portal access to a centrally-held database."},
@@ -294,7 +298,7 @@ const NODES = {
     {name:"we-take-blood", role:"Phlebotomy / bloods workflow helper", cls:"id", repo:"we-take-blood", status:"Live",
      detail:"A focused workflow app for the bloods pathway — the kind of small, separable clinical service the modular EMR layer is designed to host."},
     {name:"Local model", role:"Qwen 2.5 32B · Ollama · Mac mini M4", cls:"id", ext:"On-premise", status:"On order (Jigsaw24)",
-     detail:"The air-gapped inference engine. 30B–70B open-weight models now run on ~£2–4k commodity hardware with a 4-year refresh — comparable to one bolt-on app's annual licence in the EMIS estate."},
+     detail:"The network-isolated inference engine (controlled, auditable update/export paths). 30B–70B open-weight models now run on ~£2–4k commodity hardware with a 4-year refresh — comparable to one bolt-on app's annual licence in the EMIS estate."},
   ],
   diode: [
     {name:"WSIC_Anon", role:"De-identification / anonymisation gate", cls:"diode", repo:"WSIC_Anon", status:"Live",

@@ -419,7 +419,7 @@ body{
     <div class="logo">v</div>
     <div class="title-block">
       <b>Clinically governed shared record</b>
-      <span class="subtitle">Patient rights-holder · custodian: NHS Digital Identity Trust (proposed)</span>
+      <span class="subtitle">Patient-centred record · custodian: NHS Digital Identity Trust (proposed)</span>
     </div>
     <span class="dot">·</span>
     <span class="name" id="patname" style="opacity:.25;transition:opacity .5s">Mrs A. Patel</span>
@@ -638,7 +638,7 @@ body{
   <h4>POST-EMIS ARCHITECTURE</h4>
   <div class="layer" id="lay-vault">
     <div class="lab">Clinically governed shared record</div>
-    <div class="desc">Patient rights-holder · proposed custodian: NHS Digital Identity Trust</div>
+    <div class="desc">Patient-centred record · proposed custodian: NHS Digital Identity Trust</div>
   </div>
   <div class="arrow">↓ scoped, time-limited access</div>
   <div class="layer" id="lay-local">
@@ -740,7 +740,7 @@ const TL = {
 
 // captions paired to phase boundaries
 const captions = [
-  {t:TL.vaultRequest,  tag:"VAULT",     txt:"Patient is the primary rights-holder. Practice requests scoped, time-limited access for an episode of care."},
+  {t:TL.vaultRequest,  tag:"VAULT",     txt:"The patient has enforceable access, transparency and consent/objection rights; care providers retain statutory record-keeping duties. The practice requests scoped, time-limited access for an episode of care."},
   {t:TL.vaultGranted,  tag:"VAULT",     txt:"Access granted. The proposed vault custodian (working name: NHS Digital Identity Trust) records the grant; patient can revoke at any time."},
   {t:TL.hydrateStart,  tag:"VAULT",     txt:"The EMR is now a thin workflow layer above the vault. Each field is sourced from the shared record (purple marker)."},
   {t:TL.scribeStart,   tag:"MODULAR",   txt:"Tortus scribes the consultation. Modular components compose into the workflow — no single-vendor monolith."},

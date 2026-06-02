@@ -19,8 +19,9 @@ the local inference layer is specified and awaiting hardware, not yet running).
 
 ## The architecture being mapped
 
-1. **Patient vault** — patient is the primary rights-holder; clinical systems
-   are licensees of scoped, time-limited access.
+1. **Patient vault** — a patient-centred shared record: the patient has
+   enforceable access, transparency and consent/objection rights; care providers
+   retain statutory record-keeping and clinical governance responsibilities.
 2. **Local clinical inference** — Qwen 2.5 32B on a Mac mini M4 (hardware on
    order); by design, identifiable data never leaves the practice perimeter.
 3. **Boundary diode** — only synthetic outputs, structured metrics, model
