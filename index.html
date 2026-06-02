@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>Ridgeway AI Infrastructure — map</title>
+<style>
+:root{
+  --bg:#fdfcfa; --ink:#222; --muted:#6b6b6b;
+  --rule:#e7e4dc; --rule2:#eeece4;
+  --green:#3a8a6a; --green-deep:#2a6e54; --green-pale:#dff0e6; --green-paler:#ecf5ee;
+  --lav:#efe9f5; --lav-strong:#e2d6ee; --purple:#7b3fb8;
+  --amber:#c97520; --peach:#fbe7d4; --cream:#fff6ea;
+  --blue:#387aa3; --blue-pale:#eef5fa;
+  --ink-dark:#15101a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Inter",sans-serif;
+  background:#f5f3ee; color:var(--ink); font-size:13.5px; line-height:1.45; min-height:100vh;
+}
+.app{width:1440px;margin:0 auto;background:var(--bg);border:1px solid var(--rule);box-shadow:0 12px 40px rgba(40,30,60,.08)}
+
+/* top bar */
+.topbar{background:var(--lav);padding:14px 22px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--rule)}
+.logo{width:24px;height:24px;border-radius:6px;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-style:italic}
+.title-block{display:flex;flex-direction:column;line-height:1.18}
+.title-block b{font-weight:600}
+.title-block .subtitle{font-size:11px;color:#5a3a83;opacity:.78;font-weight:500;margin-top:1px}
+.topbar .live{margin-left:auto;color:var(--green-deep);font-weight:500;display:flex;align-items:center;gap:6px}
+.live::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(58,138,106,.5)}50%{box-shadow:0 0 0 6px rgba(58,138,106,0)}}
+.nav{display:flex;gap:14px;margin-left:auto;font-size:12px}
+.nav a{color:#5a3a83;text-decoration:none;padding:4px 10px;border-radius:14px;border:1px solid var(--lav-strong)}
+.nav a.cur{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+/* classification strip */
+.classbar{background:#1d2e26;color:#c9e0d2;padding:8px 22px;font-size:11.5px;font-family:ui-monospace,Menlo,Monaco,monospace;display:flex;align-items:center;gap:20px;flex-wrap:wrap;border-bottom:1px solid #14201a}
+.classbar b{color:#fff;font-weight:600;letter-spacing:.4px;text-transform:uppercase;font-size:11px}
+.legend{display:inline-flex;align-items:center;gap:7px}
+.swatch{width:11px;height:11px;border-radius:3px;flex:none}
+.sw-id{background:#e08a4a}
+.sw-syn{background:#5fb88a}
+.sw-pt{background:#a47ad8}
+
+.wrap{display:grid;grid-template-columns:1fr 320px;min-height:1100px}
+.map{padding:22px 26px 40px;border-right:1px solid var(--rule2)}
+.side{padding:22px 18px 40px;background:#faf8f3}
+
+.intro{font-size:14px;color:#444;line-height:1.55;margin-bottom:18px;max-width:760px}
+.intro b{color:var(--green-deep)}
+
+/* layer cards */
+.layer{border:1px solid var(--rule);border-radius:12px;padding:14px 16px 16px;margin-bottom:8px;background:#fff;position:relative;transition:box-shadow .25s,border-color .25s}
+.layer .ltag{font-size:10px;letter-spacing:.6px;text-transform:uppercase;font-weight:700;color:#fff;padding:2px 9px;border-radius:10px;display:inline-block}
+.layer h3{margin:8px 0 2px;font-size:15px}
+.layer .ldesc{font-size:12px;color:var(--muted);margin-bottom:12px;max-width:640px}
+.layer .clf{position:absolute;right:14px;top:14px;font-size:10.5px;font-family:ui-monospace,Menlo,Monaco,monospace;padding:3px 9px;border-radius:10px;font-weight:600}
+.clf.id{background:#fbe6d3;color:#9a521b}
+.clf.syn{background:#dff0e6;color:#2a6e54}
+.clf.pt{background:#efe9f5;color:#6a35a6}
+
+.layer.intel{background:#f4f7fb;border-color:#d9e6f0}
+.layer.intel .ltag{background:var(--blue)}
+.layer.vault{background:#f6f2fb;border-color:#e2d6ee}
+.layer.vault .ltag{background:var(--purple)}
+.layer.local{background:#f1f8f3;border-color:#cfe4d6}
+.layer.local .ltag{background:var(--green)}
+.layer.diode{background:#1d2e26;border-color:#14201a}
+.layer.diode .ltag{background:#e08a4a}
+.layer.diode h3{color:#eaf3ee}
+.layer.diode .ldesc{color:#9fc2ad}
+.layer.cloud{background:#f8f5fc;border-color:#e2d6ee}
+.layer.cloud .ltag{background:#6a35a6}
+
+.arrow{text-align:center;color:#b9b0a3;font-size:12px;margin:2px 0;letter-spacing:.4px}
+.arrow b{color:#8a7fa0}
+
+/* node grid */
+.nodes{display:flex;gap:8px;flex-wrap:wrap}
+.node{border:1px solid var(--rule);border-radius:9px;padding:9px 11px;background:#fff;cursor:pointer;min-width:148px;max-width:210px;transition:transform .14s,box-shadow .14s,border-color .14s;position:relative}
+.node:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(40,30,60,.1);border-color:var(--green)}
+.node.sel{border-color:var(--purple);box-shadow:0 0 0 2px rgba(123,63,184,.18)}
+.node .nname{font-weight:600;font-size:12.5px;color:#1f1f1f}
+.node .nrole{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.35}
+.node .nfoot{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:10px;color:#888}
+.node .dotc{width:8px;height:8px;border-radius:50%;flex:none}
+.node .repo{font-family:ui-monospace,Menlo,Monaco,monospace;color:#9a6fc0;font-size:10px}
+.node.ext .repo{color:#7a9aae}
+.node.new::after{content:"NEW";position:absolute;right:8px;top:8px;font-size:8.5px;font-weight:700;color:#a07530;background:var(--cream);border:1px solid #ead7a8;padding:1px 5px;border-radius:8px}
+.node.diodeN{background:#23362c;border-color:#33493c}
+.node.diodeN .nname{color:#eaf3ee}
+.node.diodeN .nrole{color:#9fc2ad}
+
+/* side detail panel */
+.side h4{margin:0 0 4px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#7a7a7a}
+.detail{border:1px solid var(--rule);border-radius:12px;background:#fff;padding:16px;min-height:280px}
+.detail .dname{font-size:17px;font-weight:700;margin-bottom:2px}
+.detail .dmeta{font-size:11px;font-family:ui-monospace,Menlo,Monaco,monospace;color:#9a6fc0;margin-bottom:12px}
+.detail .dbadge{display:inline-block;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:10px;margin:0 6px 8px 0}
+.detail p{font-size:13px;line-height:1.55;color:#333;margin:8px 0}
+.detail .drow{display:flex;gap:8px;font-size:12px;margin:6px 0;align-items:baseline}
+.detail .drow b{color:var(--green-deep);min-width:88px;flex:none}
+.detail a.dlink{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;color:var(--purple);text-decoration:none;font-family:ui-monospace,Menlo,Monaco,monospace}
+.detail .placeholder{color:#aaa;font-size:13px;text-align:center;margin-top:90px}
+
+.governance{margin-top:16px;background:var(--lav);border:1px solid var(--lav-strong);border-radius:12px;padding:14px 16px}
+.governance h4{color:#5a3a83;margin-bottom:6px}
+.governance .gitem{font-size:11.5px;color:#5a3a83;display:flex;gap:7px;align-items:baseline;margin:4px 0}
+.governance .gitem::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--purple);flex:none;margin-top:5px}
+
+.statbox{margin-top:16px;border:1px solid var(--rule);border-radius:12px;background:#fff;padding:14px}
+.statbox .srow{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--rule2)}
+.statbox .srow:last-child{border-bottom:0}
+.statbox .srow b{color:#1f1f1f}
+
+.foot{background:var(--lav);border-top:1px solid var(--rule);padding:12px 22px;font-size:11.5px;color:#5a4a72;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--purple);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="logo">v</div>
+    <div class="title-block">
+      <b>Ridgeway AI Infrastructure</b>
+      <span class="subtitle">A post-EMIS reference architecture for one NHS GP practice · after “After EMIS” v2.5</span>
+    </div>
+    <div class="nav">
+      <a class="cur" href="index.html">Map</a>
+      <a href="consultation.html">Consultation</a>
+      <a href="assurance-harness.html">Assurance</a>
+      <a href="referral-pa.html">Refer-to</a>
+    </div>
+  </div>
+
+  <div class="classbar">
+    <b>Data classification</b>
+    <span class="legend"><span class="swatch sw-id"></span> identifiable · stays on-premise</span>
+    <span class="legend"><span class="swatch sw-syn"></span> synthetic / public · cloud-eligible</span>
+    <span class="legend"><span class="swatch sw-pt"></span> patient-governed shared record</span>
+    <span style="margin-left:auto;color:#7fae95">boundary diode enforced ↓</span>
+  </div>
+
+  <div class="wrap">
+    <!-- ═══════ MAP ═══════ -->
+    <div class="map">
+      <div class="intro">
+        Every box is a real component of the working <b>Ridgeway</b> deployment or a near-term gap.
+        Identifiable inference runs locally; only synthetic and structured material crosses the
+        <b>boundary diode</b> to the cloud assurance layer. Click any node for what it does, its
+        data classification, and the repo or system that implements it.
+      </div>
+
+      <!-- Layer: external intelligence -->
+      <div class="layer intel">
+        <span class="ltag">Intelligence feeds</span>
+        <span class="clf syn">non-identifiable</span>
+        <h3>Horizon scanning &amp; knowledge base</h3>
+        <div class="ldesc">Public/synthetic knowledge work — policy, guidelines, evidence. Never touches patient data.</div>
+        <div class="nodes" id="nodes-intel"></div>
+      </div>
+
+      <div class="arrow">↓ informs clinical &amp; governance design</div>
+
+      <!-- Layer: vault -->
+      <div class="layer vault">
+        <span class="ltag">Substrate</span>
+        <span class="clf pt">patient rights-holder</span>
+        <h3>Clinically-governed shared record (patient vault)</h3>
+        <div class="ldesc">The longitudinal record. Patient is primary rights-holder; clinical systems are licensees of scoped, time-limited access. Custodian: NHS Digital Identity Trust.</div>
+        <div class="nodes" id="nodes-vault"></div>
+      </div>
+
+      <div class="arrow">↓ scoped access for an episode of care</div>
+
+      <!-- Layer: local inference -->
+      <div class="layer local">
+        <span class="ltag">On-premise</span>
+        <span class="clf id">sees identifiable data</span>
+        <h3>Local clinical inference &amp; workflow</h3>
+        <div class="ldesc">Mac mini M4 · Qwen 2.5 32B (Ollama / AnythingLLM) + best-of-breed modular apps. Air-gapped during clinical operation. Clinician retains medico-legal responsibility.</div>
+        <div class="nodes" id="nodes-local"></div>
+      </div>
+
+      <div class="arrow"><b>↓ boundary diode — outbound: synthetic outputs · metrics · model hashes only</b></div>
+
+      <!-- Layer: diode -->
+      <div class="layer diode">
+        <span class="ltag">Safety-critical</span>
+        <h3 style="color:#eaf3ee">Boundary diode</h3>
+        <div class="ldesc">Unidirectional policy gateway. No patient text, transcript, prompt or output crosses outward. De-identification, allow-list enforcement, signed inbound templates, tamper-evident audit export.</div>
+        <div class="nodes" id="nodes-diode"></div>
+      </div>
+
+      <div class="arrow"><b style="color:#8a7fa0">↓ synthetic &amp; structured only</b></div>
+
+      <!-- Layer: cloud -->
+      <div class="layer cloud">
+        <span class="ltag">Cloud</span>
+        <span class="clf syn">never sees patient data</span>
+        <h3>Cloud assurance harness</h3>
+        <div class="ldesc">Validates, benchmarks and monitors the local model using synthetic cases, public vignettes and MRCGP-style material. Four-layer evaluation stack feeding the clinical safety case.</div>
+        <div class="nodes" id="nodes-cloud"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ SIDE ═══════ -->
+    <div class="side">
+      <h4>Component detail</h4>
+      <div class="detail" id="detail">
+        <div class="placeholder">Select a node on the map to inspect it.</div>
+      </div>
+
+      <div class="governance">
+        <h4>Governance wrap (all layers)</h4>
+        <div class="gitem">DCB0129 / DCB0160 clinical safety case</div>
+        <div class="gitem">DPIA — simplified by local-only identifiable inference</div>
+        <div class="gitem">DSPT data-flow evidence via diode + audit</div>
+        <div class="gitem">Named clinical safety officer + Caldicott Guardian</div>
+        <div class="gitem">Triadic care: AI as named, auditable participant</div>
+        <div class="gitem">Immutable audit · prompt-change control · rollback</div>
+      </div>
+
+      <div class="statbox">
+        <h4 style="margin-bottom:8px">Directional economics (per practice / yr)</h4>
+        <div class="srow"><span>Current duopoly model</span><b>£15k–£26k</b></div>
+        <div class="srow"><span>Mature target model</span><b>£7.8k–£13.7k</b></div>
+        <div class="srow"><span>Local AI hardware (4-yr amortised)</span><b>£800–£1,200</b></div>
+        <div class="srow"><span>GP time recovered / session</span><b>60–90 min</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span><b style="color:#5a3a83">Source:</b> Lloyd, <i>After EMIS — AI is dissolving the GP EMR duopoly</i>, v2.5 (May 2026)</span>
+    <span>·</span>
+    <span>Prototype: Ridgeway Surgery, Harrow</span>
+    <span>·</span>
+    <span>Nodes link to working repos at <a href="https://github.com/davidlloyd73-cell">github.com/davidlloyd73-cell</a></span>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// ── Component model: every node placed in its architectural layer ──
+// cls: 'id' (identifiable/local) | 'syn' (synthetic/cloud) | 'pt' (patient vault) | 'diode'
+const GH = "https://github.com/davidlloyd73-cell/";
+const NODES = {
+  intel: [
+    {name:"The Morning Rush", role:"Daily NHS-AI intelligence digest (policy, procurement, scribes, safety)", cls:"syn", ext:"NotebookLM + Drive", status:"Live · issue 034",
+     detail:"A serial briefing tracking NHS AI policy as it moves: the £900m NHS SBS Healthcare AI framework, £2.4bn CDHS 2.0, ambient-scribe litigation, EMIS/SystmOne coding, FDP/Palantir data governance. The horizon-scanning input that keeps the governance layer current."},
+    {name:"NotebookLM corpus", role:"186 notebooks — NICE, MHRA, BNF, GMC, palliative, contract", cls:"syn", ext:"Google NotebookLM", status:"Live",
+     detail:"The bounded cloud knowledge layer from §5.3 of the paper. Deep-research over public clinical reference material. Operates under a documented separation policy from identifiable patient data."},
+    {name:"NHS Primary Care AI Roadmap", role:"Policy direction, timelines, implications (34 sources)", cls:"syn", ext:"NotebookLM", status:"Reference",
+     detail:"Synthesised view of where national policy is heading — Single Patient Record (NHS App, 2028), statutory data-sharing, abolition of NHS England. Frames what the architecture above the SPR must become."},
+    {name:"Population simulator", role:"Synthetic 10k-patient Harrow practice; Monte-Carlo intervention modelling", cls:"syn", repo:"gp-population-simulator", status:"Live",
+     detail:"Browser-based synthetic population health simulator for an ethnically-diverse urban GP practice. No real patient data — a pure synthetic substrate for scenario modelling and for generating assurance test cohorts."},
+    {name:"Surgery simulator", role:"Synthetic consultation / demand generator", cls:"syn", repo:"gp-surgery-simulator", status:"Live",
+     detail:"Generates synthetic surgeries and consultation streams — useful both as a teaching tool and as a source of non-identifiable cases for the assurance harness."},
+  ],
+  vault: [
+    {name:"Patient vault", role:"Longitudinal record; patient holds primary access rights", cls:"pt", ext:"FHIR + Verifiable Credentials", status:"Proposed substrate",
+     detail:"Federated custody with patient-controlled access — not self-hosting. FHIR structures, W3C Verifiable Credentials and DIDs. Emergency override modelled on the Summary Care Record framework; custodial defaults for reduced capacity / digital exclusion."},
+    {name:"NHS App / Single Patient Record", role:"Patient-facing access &amp; revocation", cls:"pt", ext:"NHS England (2028)", status:"National",
+     detail:"The patient-side surface. The paper argues real control needs an explicit architecture of rights, custody, audit, override and liability — not merely portal access to a centrally-held database."},
+    {name:"post-emis-mockup", role:"Visual spec of the modular EMR above the vault", cls:"pt", repo:"post-emis-mockup", status:"Live mockup",
+     detail:"The animated one-episode-of-care specification: vault hydration, Tortus scribe, local model as named participant, patient letter as first-class artefact, provenance markers. Informally validated by Dr Dom Pimenta (Tortus) and Dr Dave Triska."},
+    {name:"survivalemr", role:"AI-native GP EMR — thin workflow layer", cls:"pt", repo:"survivalemr", status:"Prototype",
+     detail:"“AI-native GP Electronic Medical Record — built in a day.” The modular EMR layer made concrete: clinical apps as separable services above the shared record rather than vendor-bundled features."},
+  ],
+  local: [
+    {name:"Tortus scribe", role:"Ambient consultation → structured note in seconds", cls:"id", ext:"Tortus AI", status:"Live · 12+ months",
+     detail:"Runs in every consultation by the lead author; integrates with EMIS via API. ~60–90 min documentation time recovered per session (subjective; formal time-and-motion pending). The best-of-breed scribe that composes into the workflow."},
+    {name:"diagnostic-teammate", role:"Two-call clinician–AI diagnostic collaboration", cls:"id", repo:"diagnostic-teammate", status:"Reference impl",
+     detail:"Reference implementation of a two-call diagnostic workflow: AI proposes, clinician interrogates, AI refines — with the clinician retaining the decision. The triadic-care pattern made into a usable interaction."},
+    {name:"consultation-analyzer", role:"Post-hoc consultation review &amp; coding suggestions", cls:"id", repo:"consultation-analyzer", status:"Live",
+     detail:"Analyses a consultation for completeness, safety-netting, and coding suggestions. Runs locally over identifiable transcript material; outputs reviewed by the clinician before anything is committed."},
+    {name:"gp-consultation-analyzer", role:"Python consultation analytics", cls:"id", repo:"gp-consultation-analyzer", status:"Live",
+     detail:"The Python sibling of the consultation analyzer — batch analysis tooling for local, on-premise evaluation of consultation quality."},
+    {name:"refletter", role:"Referral letter drafting from the note", cls:"id", repo:"refletter", status:"Live",
+     detail:"Drafts a referral letter from the consultation. Local generation, clinician-reviewed. Feeds naturally into the Refer-to directory for routing."},
+    {name:"Patient-Briefing", role:"Plain-language patient summary letters", cls:"id", repo:"Patient-Briefing", status:"Live",
+     detail:"Generates the patient-facing summary letter — reading-age controlled — as a first-class clinical artefact, drafted locally and written back to the vault on clinician sign-off."},
+    {name:"we-take-blood", role:"Phlebotomy / bloods workflow helper", cls:"id", repo:"we-take-blood", status:"Live",
+     detail:"A focused workflow app for the bloods pathway — the kind of small, separable clinical service the modular EMR layer is designed to host."},
+    {name:"Local model", role:"Qwen 2.5 32B · Ollama · Mac mini M4", cls:"id", ext:"On-premise", status:"On order (Jigsaw24)",
+     detail:"The air-gapped inference engine. 30B–70B open-weight models now run on ~£2–4k commodity hardware with a 4-year refresh — comparable to one bolt-on app's annual licence in the EMIS estate."},
+  ],
+  diode: [
+    {name:"WSIC_Anon", role:"De-identification / anonymisation gate", cls:"diode", repo:"WSIC_Anon", status:"Live",
+     detail:"Anonymisation tooling sitting on the boundary. The component that lets structured signal leave the practice perimeter without patient material — the practical heart of the diode's de-identification requirement."},
+    {name:"Allow-list enforcer", role:"Only metrics, hashes, synthetic outputs pass out", cls:"diode", ext:"Boundary service", status:"Design",
+     detail:"Pre-specified outbound allow-list: structured metrics, cryptographic hashes, model metadata, synthetic-suite outputs. Inbound restricted to signed, version-controlled prompt templates and assurance configs. Tamper-evident audit on every crossing."},
+  ],
+  cloud: [
+    {name:"Assurance harness", role:"4-layer evaluation stack on synthetic cases", cls:"syn", local:"assurance-harness.html", status:"This build",
+     detail:"The centrepiece. Deterministic safety checks → guideline-grounded RAG (NICE/CKS/BNF/MHRA) → multi-grader frontier critique (Claude/GPT/Gemini) → human adjudication. Produces versioned assurance reports for clinical governance. Open the live dashboard ↗", linkLabel:"Open assurance dashboard"},
+    {name:"Refer-to / Referral PA", role:"Service-owned referral directory, AI steward", cls:"syn", local:"referral-pa.html", status:"Concept + prototype",
+     detail:"A search-led referral directory owned by the services it lists, kept honest by an AI steward. Plain-English query in, one current service card out. Operates on public/service-supplied directory data — no patient material. Open the live tool ↗", linkLabel:"Open Refer-to"},
+    {name:"ridgeway-ai-tools-landing", role:"Practice AI tools hub / front door", cls:"syn", repo:"ridgeway-ai-tools-landing", status:"Live",
+     detail:"The landing page that ties the Ridgeway clinical AI tools together — the human front door to the modular estate."},
+  ],
+};
+
+const clsLabel = {id:"identifiable · local", syn:"synthetic · cloud-eligible", pt:"patient-governed", diode:"de-identified at boundary"};
+const clsColor = {id:"#e08a4a", syn:"#5fb88a", pt:"#a47ad8", diode:"#e08a4a"};
+const clsBadgeBg = {id:"#fbe6d3", syn:"#dff0e6", pt:"#efe9f5", diode:"#33493c"};
+const clsBadgeFg = {id:"#9a521b", syn:"#2a6e54", pt:"#6a35a6", diode:"#cfe7d8"};
+
+function makeNode(n, layerKey){
+  const el = document.createElement("div");
+  el.className = "node" + (n.ext ? " ext":"") + (n.local || n.status==="This build" || n.status==="Concept + prototype" ? " new":"") + (layerKey==="diode" ? " diodeN":"");
+  const repoTxt = n.repo ? n.repo : (n.ext ? n.ext : (n.local||""));
+  el.innerHTML =
+    '<div class="nname">'+n.name+'</div>'+
+    '<div class="nrole">'+n.role+'</div>'+
+    '<div class="nfoot"><span class="dotc" style="background:'+clsColor[n.cls]+'"></span>'+
+      '<span class="repo">'+repoTxt+'</span></div>';
+  el.onclick = () => { selectNode(el, n); };
+  return el;
+}
+
+function selectNode(el, n){
+  document.querySelectorAll(".node.sel").forEach(x=>x.classList.remove("sel"));
+  el.classList.add("sel");
+  const d = $("detail");
+  let link = "";
+  if (n.local) link = '<a class="dlink" href="'+n.local+'">▷ '+(n.linkLabel||"Open")+'</a>';
+  else if (n.repo) link = '<a class="dlink" href="'+GH+n.repo+'" target="_blank">↗ '+GH.replace("https://","")+n.repo+'</a>';
+  d.innerHTML =
+    '<div class="dname">'+n.name+'</div>'+
+    '<div class="dmeta">'+(n.repo?(GH.replace("https://","")+n.repo):(n.ext||"internal"))+'</div>'+
+    '<span class="dbadge" style="background:'+clsBadgeBg[n.cls]+';color:'+clsBadgeFg[n.cls]+'">'+clsLabel[n.cls]+'</span>'+
+    '<span class="dbadge" style="background:#eef0f2;color:#555">'+n.status+'</span>'+
+    '<p>'+n.detail+'</p>'+
+    '<div class="drow"><b>Role</b><span>'+n.role+'</span></div>'+
+    link;
+}
+
+for (const [key, arr] of Object.entries(NODES)){
+  const host = $("nodes-"+key);
+  arr.forEach(n => host.appendChild(makeNode(n, key)));
+}
+</script>
+</body>
+</html>

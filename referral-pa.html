@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>Refer-to — service-owned referral directory</title>
+<style>
+:root{
+  --bg:#fdfcfa; --ink:#222; --muted:#6b6b6b;
+  --rule:#e7e4dc; --rule2:#eeece4;
+  --green:#3a8a6a; --green-deep:#2a6e54; --green-pale:#dff0e6;
+  --lav:#efe9f5; --lav-strong:#e2d6ee; --purple:#7b3fb8;
+  --amber:#c97520; --red:#c0453f; --cream:#fff6ea; --blue:#387aa3; --blue-pale:#eef5fa;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Inter",sans-serif;background:#f5f3ee;color:var(--ink);font-size:13.5px;line-height:1.45;min-height:100vh}
+.app{width:1440px;margin:0 auto;background:var(--bg);border:1px solid var(--rule);box-shadow:0 12px 40px rgba(40,30,60,.08)}
+.topbar{background:var(--lav);padding:14px 22px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--rule)}
+.logo{width:24px;height:24px;border-radius:6px;background:var(--purple);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-style:italic}
+.title-block{display:flex;flex-direction:column;line-height:1.18}
+.title-block b{font-weight:600}
+.title-block .subtitle{font-size:11px;color:#5a3a83;opacity:.78;font-weight:500;margin-top:1px}
+.nav{display:flex;gap:14px;margin-left:auto;font-size:12px}
+.nav a{color:#5a3a83;text-decoration:none;padding:4px 10px;border-radius:14px;border:1px solid var(--lav-strong)}
+.nav a.cur{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+.hero{padding:30px 26px 18px;text-align:center;background:linear-gradient(180deg,#faf7f1,#fdfcfa)}
+.hero h1{font-size:24px;margin:0 0 4px}
+.hero p{color:var(--muted);margin:0 0 18px;font-size:14px}
+.searchwrap{max-width:760px;margin:0 auto;display:flex;gap:8px}
+.searchwrap input{flex:1;padding:14px 18px;font-size:15px;border:1.5px solid var(--rule);border-radius:10px;outline:none}
+.searchwrap input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(123,63,184,.12)}
+.searchwrap button{padding:0 22px;border:0;border-radius:10px;background:var(--green-deep);color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.examples{max-width:760px;margin:12px auto 0;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ex{font-size:12px;color:var(--blue);background:var(--blue-pale);border:1px solid #d6e8f0;padding:5px 12px;border-radius:14px;cursor:pointer}
+.ex:hover{background:#e2eef6}
+
+.parsebar{max-width:920px;margin:14px auto 0;font-size:12px;color:var(--purple);background:var(--lav);border-radius:10px;padding:9px 14px;display:none;align-items:center;gap:8px}
+.parsebar.show{display:flex}
+.parsebar .ptag{background:var(--purple);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px}
+
+.results{max-width:920px;margin:22px auto 30px;padding:0 20px}
+
+/* service card */
+.scard{border:1px solid var(--rule);border-radius:12px;background:#fff;margin-bottom:16px;overflow:hidden;box-shadow:0 4px 14px rgba(40,30,60,.05)}
+.scard .tierbar{padding:6px 16px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:10px}
+.tier-nhs{background:var(--green-deep)}
+.tier-stat{background:#b5532a}
+.tier-cvcs{background:var(--purple)}
+.tier-ivcs{background:#7a7a7a}
+.scard .tierbar .fresh{margin-left:auto;font-weight:600;font-size:10px;background:rgba(255,255,255,.22);padding:2px 9px;border-radius:10px}
+.safety-banner{background:#3a1714;color:#ffd9d4;padding:10px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px}
+.safety-banner::before{content:"⚠";font-size:16px}
+.scard .body{padding:16px 18px}
+.scard h3{margin:0 0 2px;font-size:17px}
+.scard .prov{font-size:12px;color:var(--muted);margin-bottom:12px}
+.field{display:flex;gap:10px;margin:9px 0;font-size:13px}
+.field .lab{flex:none;width:130px;font-weight:600;color:var(--green-deep)}
+.field.notfor .lab{color:var(--amber)}
+.field .val{flex:1;color:#333;line-height:1.5}
+.field .val a{color:var(--purple);text-decoration:none;font-family:ui-monospace,Menlo,Monaco,monospace;font-size:12px}
+.route{display:inline-block;background:#eef5fa;color:var(--blue);border:1px solid #d6e8f0;padding:2px 9px;border-radius:10px;font-size:11px;margin:0 6px 4px 0;font-weight:600}
+.scard .cardfoot{display:flex;align-items:center;gap:14px;padding:10px 18px;border-top:1px solid var(--rule2);background:#faf8f3;font-size:11.5px;color:#888}
+.scard .cardfoot .wrong{margin-left:auto;color:var(--red);cursor:pointer}
+.freshdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+.fresh-ok{background:#5fb88a}.fresh-rev{background:#e3b35a}.fresh-stale{background:#c0453f}
+
+.alt{font-size:12.5px;color:#555;background:#fff;border:1px dashed var(--rule);border-radius:10px;padding:11px 14px;margin-bottom:16px}
+.alt b{color:var(--green-deep)}
+.alt .altlink{color:var(--purple);cursor:pointer;text-decoration:underline}
+
+.steward{max-width:920px;margin:0 auto 30px;padding:0 20px}
+.steward .sbox{border:1px solid var(--lav-strong);border-radius:12px;background:var(--lav);padding:14px 16px}
+.steward h4{margin:0 0 8px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#5a3a83}
+.steward .sitem{font-size:12px;color:#5a3a83;display:flex;gap:8px;align-items:baseline;margin:5px 0}
+.steward .sitem::before{content:"◆";color:var(--purple);font-size:9px;flex:none;margin-top:3px}
+
+.foot{background:var(--lav);border-top:1px solid var(--rule);padding:12px 22px;font-size:11.5px;color:#5a4a72;display:flex;gap:16px;flex-wrap:wrap}
+.empty{text-align:center;color:#aaa;padding:40px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="logo">v</div>
+    <div class="title-block">
+      <b>Refer-to</b>
+      <span class="subtitle">A search-led referral directory, owned by the services it lists · kept honest by an AI steward</span>
+    </div>
+    <div class="nav">
+      <a href="index.html">Map</a>
+      <a href="consultation.html">Consultation</a>
+      <a href="assurance-harness.html">Assurance</a>
+      <a class="cur" href="referral-pa.html">Refer-to</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1>For this patient, this service, today — what do I do?</h1>
+    <p>Plain English in. One accurate, current service card out — with the form, the address, the criteria and a freshness date.</p>
+    <div class="searchwrap">
+      <input id="q" placeholder="e.g. how do I refer adult orthotics at LNWUH?" autocomplete="off" />
+      <button id="go">Search</button>
+    </div>
+    <div class="examples" id="examples"></div>
+    <div class="parsebar" id="parsebar"><span class="ptag">AI steward</span><span id="parsetxt"></span></div>
+  </div>
+
+  <div class="results" id="results">
+    <div class="empty">Try a search above — the directory understands abbreviations, lay terms and common misspellings.</div>
+  </div>
+
+  <div class="steward">
+    <div class="sbox">
+      <h4>The AI is the steward, not the author</h4>
+      <div class="sitem">Onboards listings from a service's Google-form response; queues for the custodian to confirm before publication.</div>
+      <div class="sitem">Runs consistency checks — flags two services claiming the same referrals, or a changed route with stale criteria.</div>
+      <div class="sitem">Parses synonyms (RACPC = rapid access chest pain), misspellings and lay terms; routes ambiguity to the top 2–3 candidates, never a confident wrong answer.</div>
+      <div class="sitem">Chases freshness — quarterly nudges, demotes stale entries, escalates at six months. Never overrides what a service says it does.</div>
+      <div class="sitem"><b>Operates on public, service-supplied directory data only — no patient material crosses into Refer-to.</b></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span><b style="color:#5a3a83">Concept:</b> Lloyd, <i>Refer-to</i> (companion to <i>The Referral PA</i>), May 2026</span>
+    <span>·</span>
+    <span>Sits on top of e-RS, Rego and the ICB pathways — the missing front door, not a competitor</span>
+    <span>·</span>
+    <span>Launch: NW London ICB · ~70 mixed listings</span>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const SERVICES = [
+  {
+    id:"orthotics", tier:"stat", tierLabel:"NHS / Community route",
+    keywords:["orthotics","orthotic","lnwuh","foot","insole","ankle","brace","podiatry"],
+    name:"Adult Orthotics — London North West University Healthcare", prov:"LNWUH · routes to community MSK / podiatry",
+    does:"Assessment and provision of orthoses (insoles, braces, footwear) for adults.",
+    forwho:"Adults needing orthotic assessment, referred via the appropriate community service.",
+    notfor:"Not currently accepting direct GP referrals via e-RS — and not for acute foot infection (see same-day pathways).",
+    routes:[["No longer e-RS","strike"],["Brent/Harrow: NW London community MSK (Cora Health)","email"],["Ealing: community podiatry","email"]],
+    routeDetail:'Brent/Harrow → community MSK service with Cora Health. Ealing → <a>wlt.ealingcommunity.referrals@nhs.net</a> (S1 form). Specialist orthotics made onward by the community team if criteria met.',
+    include:"S1 form (Ealing), relevant imaging, diabetic foot risk status if applicable.",
+    wait:"Community triage ~2–3 weeks.",
+    verified:"26 May 2026", fresh:"ok",
+    alt:"If you meant <span class='altlink' data-q='diabetic foot'>diabetic foot</span> with active infection, that is a same-day pathway, not orthotics."
+  },
+  {
+    id:"racpc", tier:"nhs", tierLabel:"NHS pathway",
+    keywords:["chest pain","racpc","rapid access","angina","cardiology","cardiac","chest"],
+    name:"Rapid Access Chest Pain Clinic (RACPC)", prov:"Imperial / LNWUH cardiology",
+    does:"Urgent assessment of suspected stable angina / new exertional chest pain.",
+    forwho:"New chest pain suspected cardiac in origin, not requiring emergency admission.",
+    notfor:"NOT for acute chest pain or suspected ACS — dial 999. Not for confirmed stable angina already under cardiology (use routine pathway).",
+    routes:[["e-RS: 'Cardiology — RACPC'","ers"],["Rego specialty: Cardiology","rego"]],
+    routeDetail:'e-RS service heading <b>“Cardiology — Rapid Access Chest Pain”</b>. Advice &amp; guidance via Rego (Cardiology) for borderline cases.',
+    include:"Recent ECG, FBC/U&E/lipids/HbA1c, troponin if done, current medication, BP.",
+    wait:"Seen within 2 weeks (target).",
+    verified:"21 May 2026", fresh:"ok",
+    alt:"If you meant <span class='altlink' data-q='stable angina routine cardiology'>stable angina already diagnosed</span>, see the routine cardiology pathway."
+  },
+  {
+    id:"safeguarding", tier:"stat", tierLabel:"Statutory non-NHS · safeguarding",
+    keywords:["safeguarding","child at risk","mash","section 47","abuse","neglect","child protection","at risk","suspected abuse"],
+    name:"Harrow Children's Safeguarding — MASH", prov:"London Borough of Harrow · Multi-Agency Safeguarding Hub",
+    safety:"If a child is at immediate risk, dial 999. Out of hours: Harrow Emergency Duty Team 020 8424 0999.",
+    does:"Multi-agency triage and response to children's safeguarding concerns.",
+    forwho:"Any concern about a child's safety, welfare, abuse or neglect.",
+    notfor:"Not a clinical referral route — does not replace urgent medical assessment where needed.",
+    routes:[["Phone (urgent)","phone"],["Secure portal / form","email"]],
+    routeDetail:'MASH duty line (office hours) <a>020 8901 2690</a>; out of hours EDT <a>020 8424 0999</a>; secure referral form on Harrow Council site. <b>999 if immediate risk.</b>',
+    include:"Child details, nature of concern, immediate risk assessment, any disclosures verbatim.",
+    wait:"Immediate triage; statutory timescales apply.",
+    verified:"28 May 2026", fresh:"ok",
+    alt:"For an adult at risk, see <span class='altlink' data-q='adult safeguarding harrow'>Harrow Adults' Safeguarding</span>."
+  },
+  {
+    id:"horizons", tier:"cvcs", tierLabel:"Commissioned VCS",
+    keywords:["mental health","child","cyp","emotional","wellbeing","anxiety","low mood","young person","horizons","anna freud","counselling"],
+    name:"Harrow Horizons — children &amp; young people's emotional wellbeing", prov:"Anna Freud, on behalf of Harrow Council &amp; the ICB",
+    does:"Early emotional-wellbeing and mental-health support for children and young people.",
+    forwho:"CYP (typically 5–18) with emerging emotional/behavioural difficulties below CAMHS threshold.",
+    notfor:"Not for acute risk or established severe mental illness — for crisis use CAMHS crisis / 999.",
+    routes:[["Self-referral or professional referral form","email"],["Phone","phone"]],
+    routeDetail:'Online referral form on the Harrow Horizons site; accepts self-referral and GP referral. Single point of access by phone for advice.',
+    include:"Brief description of difficulties, school involvement, any risk, consent of young person/parent.",
+    wait:"Initial contact ~1–2 weeks.",
+    verified:"24 May 2026", fresh:"rev",
+    alt:"For debt or housing affecting the family, see <span class='altlink' data-q='citizens advice harrow'>Citizens Advice Harrow</span>."
+  },
+  {
+    id:"2ww-lgi", tier:"nhs", tierLabel:"NHS pathway · 2WW",
+    keywords:["weight loss","dysphagia","2ww","cancer","upper gi","swallowing","stomach","oesophagus","two week wait"],
+    name:"Suspected Upper GI Cancer — 2 Week Wait", prov:"LNWUH / Imperial",
+    does:"Urgent suspected-cancer assessment for upper GI symptoms.",
+    forwho:"Dysphagia at any age; or ≥55 with weight loss plus upper abdo pain / reflux / dyspepsia (per NICE NG12).",
+    notfor:"Not for uncomplicated dyspepsia without red flags — manage in primary care first.",
+    routes:[["e-RS: '2WW Upper GI'","ers"]],
+    routeDetail:'e-RS two-week-wait proforma <b>“Suspected Cancer — Upper GI”</b>. Attach the completed proforma or referral is returned.',
+    include:"FBC, ferritin, weight trend, symptom duration, completed 2WW proforma.",
+    wait:"Seen within 14 days.",
+    verified:"20 May 2026", fresh:"ok",
+    alt:""
+  }
+];
+
+const EXAMPLES = [
+  "how do I refer to rapid access chest pain clinics?",
+  "adult orthotics, LNWUH",
+  "child at risk safeguarding Harrow",
+  "emotional wellbeing for a teenager",
+  "weight loss and dysphagia over 55"
+];
+
+// build example chips
+EXAMPLES.forEach(x=>{
+  const e=document.createElement("span"); e.className="ex"; e.textContent=x;
+  e.onclick=()=>{$("q").value=x; search();};
+  $("examples").appendChild(e);
+});
+
+function score(svc, q){
+  q = q.toLowerCase();
+  let s=0;
+  svc.keywords.forEach(k=>{ if(q.includes(k)) s += k.length>4?2:1; });
+  if (q.includes(svc.id)) s+=3;
+  return s;
+}
+
+function routeChip(r){
+  if (r[1]==="strike") return '<span class="route" style="text-decoration:line-through;opacity:.7;background:#f6e6e4;color:#a4453f;border-color:#e8c9c5">'+r[0]+'</span>';
+  return '<span class="route">'+r[0]+'</span>';
+}
+
+function freshBadge(f){
+  if (f==="ok") return '<span class="freshdot fresh-ok"></span>verified';
+  if (f==="rev") return '<span class="freshdot fresh-rev"></span>needs review';
+  return '<span class="freshdot fresh-stale"></span>stale';
+}
+
+function renderCard(svc){
+  const safety = svc.safety ? '<div class="safety-banner">'+svc.safety+'</div>' : '';
+  const routes = svc.routes.map(routeChip).join("");
+  return '<div class="scard">'+
+    '<div class="tierbar tier-'+svc.tier+'">'+svc.tierLabel+'<span class="fresh">verified by service · '+svc.verified+'</span></div>'+
+    safety+
+    '<div class="body">'+
+      '<h3>'+svc.name+'</h3>'+
+      '<div class="prov">'+svc.prov+'</div>'+
+      '<div class="field"><div class="lab">What it does</div><div class="val">'+svc.does+'</div></div>'+
+      '<div class="field"><div class="lab">Who it is for</div><div class="val">'+svc.forwho+'</div></div>'+
+      '<div class="field notfor"><div class="lab">Who it is NOT for</div><div class="val">'+svc.notfor+'</div></div>'+
+      '<div class="field"><div class="lab">How to refer</div><div class="val">'+routes+'<div style="margin-top:6px">'+svc.routeDetail+'</div></div></div>'+
+      '<div class="field"><div class="lab">What to include</div><div class="val">'+svc.include+'</div></div>'+
+      '<div class="field"><div class="lab">Triage / wait</div><div class="val">'+svc.wait+'</div></div>'+
+    '</div>'+
+    '<div class="cardfoot">'+freshBadge(svc.fresh)+'<span>·</span><span>links to the live e-RS / Rego entry — directory does not duplicate clinical content</span><span class="wrong">⚑ This is wrong</span></div>'+
+  '</div>'+
+  (svc.alt ? '<div class="alt"><b>Did you mean something else?</b> '+svc.alt+'</div>' : '');
+}
+
+function search(){
+  const q = $("q").value.trim();
+  if (!q){ return; }
+  const ranked = SERVICES.map(s=>({s,v:score(s,q)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+
+  // steward parse line
+  $("parsebar").classList.add("show");
+  let parse = "parsed “"+q+"” → ";
+  if (ranked.length===0) parse += "no confident match. Try a service name, symptom, or borough.";
+  else {
+    parse += "best match: "+ranked[0].s.name.split(" — ")[0];
+    if (ranked.length>1) parse += " · "+(ranked.length-1)+" adjacent option"+(ranked.length>2?"s":"");
+    if (/at risk|mash|abuse|section 47|safeguard/i.test(q)) parse = "safeguarding terms detected → returning the borough safeguarding route first, before any other match.";
+  }
+  $("parsetxt").textContent = parse;
+
+  if (ranked.length===0){
+    $("results").innerHTML = '<div class="empty">No confident match — the steward would route this to the editorial queue rather than guess. Try “orthotics”, “chest pain”, “safeguarding”, or a borough + service.</div>';
+    return;
+  }
+  // safeguarding always floats to top if detected
+  if (/at risk|mash|abuse|section 47|safeguard|child protection/i.test(q)){
+    ranked.sort((a,b)=> (b.s.tier==="stat"&&/safeguard/i.test(b.s.id)?1:0) - (a.s.tier==="stat"&&/safeguard/i.test(a.s.id)?1:0));
+  }
+  $("results").innerHTML = ranked.map(x=>renderCard(x.s)).join("");
+
+  // wire alt links
+  document.querySelectorAll(".altlink").forEach(a=>{
+    a.onclick=()=>{ $("q").value=a.dataset.q; search(); window.scrollTo({top:0,behavior:"smooth"}); };
+  });
+  document.querySelectorAll(".wrong").forEach(w=>{
+    w.onclick=()=>{ w.textContent="✓ reported — sent to service custodian + AI steward"; w.style.color="#2a6e54"; w.style.cursor="default"; };
+  });
+}
+
+$("go").onclick = search;
+$("q").addEventListener("keydown", e=>{ if(e.key==="Enter") search(); });
+</script>
+</body>
+</html>
